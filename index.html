@@ -12,25 +12,14 @@
 
     <title>Indonesia Location Explorer</title>
 
-
-    <!-- ==============================
-         LEAFLET CSS
-    =============================== -->
-
+    <!-- Leaflet CSS -->
     <link
         rel="stylesheet"
         href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     >
 
-
-    <!-- ==============================
-         CUSTOM CSS
-    =============================== -->
-
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
 
 </head>
 
@@ -38,75 +27,36 @@
 <body>
 
 
-    <!-- ==============================
-         MAP
-    =============================== -->
-
-    <main id="map"></main>
+    <!-- MAP -->
+    <div id="map"></div>
 
 
-    <!-- ==============================
-         FLOATING INFO PANEL
-    =============================== -->
-
+    <!-- INFO PANEL -->
     <aside class="info-panel">
 
-
-        <!-- PROJECT LABEL -->
-
-        <div class="project-label">
-
-            <span class="project-dot"></span>
-
+        <div class="eyebrow">
             GIS PORTFOLIO
-
         </div>
 
-
-        <!-- TITLE -->
-
         <h1>
-
             Indonesia
-            <br>
-
             <span>Location Explorer</span>
-
         </h1>
 
-
-        <!-- DESCRIPTION -->
-
-        <p class="description">
-
-            An interactive web map showcasing
-            selected locations across Indonesia.
-
+        <p class="intro">
+            Interactive location mapping project
+            created with QGIS, GeoJSON and Leaflet.
         </p>
 
 
-        <!-- DIVIDER -->
-
-        <div class="panel-divider"></div>
+        <div class="divider"></div>
 
 
-        <!-- LOCATION HEADER -->
-
-        <div class="location-heading">
-
-            <span>SELECTED LOCATIONS</span>
-
-            <span
-                id="location-count"
-                class="location-count"
-            >
-                0
-            </span>
-
+        <div class="section-title">
+            <span>LOCATIONS</span>
+            <span id="location-count">0</span>
         </div>
 
-
-        <!-- LOCATION LIST -->
 
         <div
             id="location-list"
@@ -114,97 +64,54 @@
         >
 
             <div class="loading">
-
-                Loading locations...
-
+                Loading...
             </div>
 
         </div>
 
 
-        <!-- FOOTER -->
-
-        <div class="panel-footer">
-
-            <span>
-                QGIS
-            </span>
-
-            <span>•</span>
-
-            <span>
-                GEOJSON
-            </span>
-
-            <span>•</span>
-
-            <span>
-                LEAFLET
-            </span>
-
+        <div class="footer">
+            QGIS&nbsp;&nbsp;·&nbsp;&nbsp;GeoJSON&nbsp;&nbsp;·&nbsp;&nbsp;Leaflet
         </div>
-
 
     </aside>
 
 
-    <!-- ==============================
-         TOP RIGHT LABEL
-    =============================== -->
-
-    <div class="map-title">
-
-        <span>WEB GIS</span>
-
-        <strong>INDONESIA</strong>
-
+    <!-- MAP LABEL -->
+    <div class="map-label">
+        INDONESIA / WEB GIS
     </div>
 
 
-    <!-- ==============================
-         LEAFLET JS
-    =============================== -->
-
+    <!-- LEAFLET JS -->
     <script
         src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     ></script>
 
 
-
     <script>
 
+        // =====================================================
+        // 1. CREATE MAP
+        // =====================================================
 
-        /* =====================================================
-           INITIALIZE MAP
-        ===================================================== */
-
-        const map = L.map(
-            "map",
-            {
-                zoomControl: false
-            }
-        ).setView(
+        const map = L.map("map", {
+            zoomControl: false
+        }).setView(
             [-2.5, 118],
             5
         );
 
 
-
-        /* =====================================================
-           ZOOM CONTROL
-        ===================================================== */
-
-        L.control.zoom(
-            {
-                position: "bottomright"
-            }
-        ).addTo(map);
+        // Zoom control
+        L.control.zoom({
+            position: "bottomright"
+        }).addTo(map);
 
 
-
-        /* =====================================================
-           OPENSTREETMAP BASEMAP
-        ===================================================== */
+        // =====================================================
+        // 2. OPENSTREETMAP
+        // =====================================================
 
         L.tileLayer(
             "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -212,514 +119,458 @@
                 maxZoom: 19,
 
                 attribution:
-                    '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors'
+                    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }
         ).addTo(map);
 
 
+        // =====================================================
+        // 3. FUNCTION TO READ QGIS FIELD
+        // =====================================================
 
-        /* =====================================================
-           CUSTOM MARKER ICON
-        ===================================================== */
+        function getField(properties, wantedName) {
 
-        const markerIcon = L.divIcon(
-            {
-
-                className: "custom-marker",
-
-                html: `
-                    <div class="marker-outer">
-                        <div class="marker-inner"></div>
-                    </div>
-                `,
-
-                iconSize: [
-                    30,
-                    30
-                ],
-
-                iconAnchor: [
-                    15,
-                    15
-                ],
-
-                popupAnchor: [
-                    0,
-                    -17
-                ]
-
+            if (!properties) {
+                return "";
             }
-        );
+
+            const wanted =
+                wantedName
+                    .toLowerCase()
+                    .replace(/[\s_-]/g, "");
 
 
-
-        /* =====================================================
-           FIND QGIS FIELD
-           Works with:
-           nama
-           Nama
-           NAMA
-           Nama_Lokasi
-           etc.
-        ===================================================== */
-
-        function getField(
-            properties,
-            fieldName
-        ) {
-
-            if (
-                !properties ||
-                !fieldName
+            for (
+                const key of Object.keys(properties)
             ) {
 
-                return "";
+                const normalizedKey =
+                    key
+                        .toLowerCase()
+                        .replace(/[\s_-]/g, "");
+
+
+                if (
+                    normalizedKey === wanted
+                ) {
+
+                    return properties[key];
+
+                }
 
             }
 
 
-            const target =
-                fieldName
-                    .toLowerCase()
-                    .replace(
-                        /[\s_-]/g,
-                        ""
+            return "";
+        }
+
+
+        // =====================================================
+        // 4. SHOW ERROR
+        // =====================================================
+
+        function showError(message) {
+
+            const list =
+                document.getElementById(
+                    "location-list"
+                );
+
+
+            list.innerHTML = `
+                <div class="error-box">
+                    <strong>Map data error</strong>
+                    <p>${message}</p>
+                </div>
+            `;
+
+        }
+
+
+        // =====================================================
+        // 5. LOAD GEOJSON
+        // =====================================================
+
+        fetch("./lokasi.geojson")
+
+            .then(response => {
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "lokasi.geojson tidak ditemukan. Pastikan file JSON berada satu folder dengan index.html."
                     );
 
+                }
 
-            const foundKey =
-                Object.keys(
-                    properties
-                ).find(
-                    key => {
+                return response.json();
 
-                        const normalizedKey =
-                            key
-                                .toLowerCase()
-                                .replace(
-                                    /[\s_-]/g,
-                                    ""
+            })
+
+
+            .then(data => {
+
+                console.log(
+                    "GeoJSON loaded:",
+                    data
+                );
+
+
+                // Make sure it's a FeatureCollection
+                if (
+                    !data ||
+                    data.type !== "FeatureCollection"
+                ) {
+
+                    throw new Error(
+                        "File lokasi.geojson bukan FeatureCollection GeoJSON yang valid."
+                    );
+
+                }
+
+
+                if (
+                    !Array.isArray(
+                        data.features
+                    )
+                ) {
+
+                    throw new Error(
+                        "GeoJSON tidak memiliki daftar features."
+                    );
+
+                }
+
+
+                // Update count
+                document.getElementById(
+                    "location-count"
+                ).textContent =
+                    data.features.length;
+
+
+                // Remove loading text
+                document.getElementById(
+                    "location-list"
+                ).innerHTML = "";
+
+
+                // Group for map
+                const mapFeatures = [];
+
+
+                // =================================================
+                // LOOP THROUGH FEATURES
+                // =================================================
+
+                data.features.forEach(
+                    (feature, index) => {
+
+                        if (
+                            !feature.geometry ||
+                            feature.geometry.type !== "Point" ||
+                            !Array.isArray(
+                                feature.geometry.coordinates
+                            )
+                        ) {
+
+                            console.warn(
+                                "Feature dilewati karena bukan Point:",
+                                feature
+                            );
+
+                            return;
+
+                        }
+
+
+                        const coordinates =
+                            feature.geometry.coordinates;
+
+
+                        const longitude =
+                            Number(
+                                coordinates[0]
+                            );
+
+
+                        const latitude =
+                            Number(
+                                coordinates[1]
+                            );
+
+
+                        if (
+                            !Number.isFinite(
+                                longitude
+                            ) ||
+                            !Number.isFinite(
+                                latitude
+                            )
+                        ) {
+
+                            console.warn(
+                                "Koordinat tidak valid:",
+                                feature
+                            );
+
+                            return;
+
+                        }
+
+
+                        // QGIS GeoJSON = [longitude, latitude]
+                        const latlng = [
+                            latitude,
+                            longitude
+                        ];
+
+
+                        const properties =
+                            feature.properties || {};
+
+
+                        // Read fields
+                        const nama =
+                            getField(
+                                properties,
+                                "nama"
+                            ) ||
+                            "Unknown Location";
+
+
+                        const provinsi =
+                            getField(
+                                properties,
+                                "provinsi"
+                            ) ||
+                            "Indonesia";
+
+
+                        const keterangan =
+                            getField(
+                                properties,
+                                "keterangan"
+                            ) ||
+                            "No description available.";
+
+
+                        const kategori =
+                            getField(
+                                properties,
+                                "kategori"
+                            ) ||
+                            "LOCATION";
+
+
+                        // =================================================
+                        // CREATE MARKER
+                        // =================================================
+
+                        const marker =
+                            L.circleMarker(
+                                latlng,
+                                {
+                                    radius: 8,
+
+                                    color: "#111111",
+
+                                    weight: 3,
+
+                                    fillColor: "#ffffff",
+
+                                    fillOpacity: 1
+                                }
+                            ).addTo(map);
+
+
+                        // Small white center effect
+                        marker.bindTooltip(
+                            nama,
+                            {
+                                direction: "top",
+
+                                offset: [
+                                    0,
+                                    -8
+                                ],
+
+                                opacity: 0.9
+                            }
+                        );
+
+
+                        // =================================================
+                        // POPUP
+                        // =================================================
+
+                        const popupHTML = `
+
+                            <div class="popup">
+
+                                <div class="popup-category">
+                                    ${kategori}
+                                </div>
+
+                                <h2>
+                                    ${nama}
+                                </h2>
+
+                                <div class="popup-province">
+                                    ${provinsi}
+                                </div>
+
+                                <div class="popup-divider"></div>
+
+                                <p>
+                                    ${keterangan}
+                                </p>
+
+                            </div>
+
+                        `;
+
+
+                        marker.bindPopup(
+                            popupHTML,
+                            {
+                                maxWidth: 280
+                            }
+                        );
+
+
+                        // Save marker
+                        mapFeatures.push(
+                            marker
+                        );
+
+
+                        // =================================================
+                        // SIDEBAR ITEM
+                        // =================================================
+
+                        const item =
+                            document.createElement(
+                                "button"
+                            );
+
+
+                        item.className =
+                            "location-item";
+
+
+                        item.innerHTML = `
+
+                            <span class="location-number">
+                                ${String(index + 1).padStart(2, "0")}
+                            </span>
+
+                            <span class="location-info">
+
+                                <strong>
+                                    ${nama}
+                                </strong>
+
+                                <small>
+                                    ${provinsi}
+                                </small>
+
+                            </span>
+
+                            <span class="location-arrow">
+                                ↗
+                            </span>
+
+                        `;
+
+
+                        item.addEventListener(
+                            "click",
+                            () => {
+
+                                map.flyTo(
+                                    latlng,
+                                    10,
+                                    {
+                                        duration: 1
+                                    }
                                 );
 
-                        return (
-                            normalizedKey ===
-                            target
+
+                                setTimeout(
+                                    () => {
+
+                                        marker.openPopup();
+
+                                    },
+                                    650
+                                );
+
+                            }
                         );
+
+
+                        document
+                            .getElementById(
+                                "location-list"
+                            )
+                            .appendChild(
+                                item
+                            );
 
                     }
                 );
 
 
-            if (
-                foundKey === undefined
-            ) {
-
-                return "";
-
-            }
-
-
-            return properties[
-                foundKey
-            ];
-
-        }
-
-
-
-        /* =====================================================
-           LOAD GEOJSON
-        ===================================================== */
-
-        fetch(
-            "lokasi.geojson"
-        )
-
-        .then(
-            response => {
+                // =================================================
+                // FIT MAP
+                // =================================================
 
                 if (
-                    !response.ok
+                    mapFeatures.length > 0
                 ) {
 
-                    throw new Error(
-                        "lokasi.geojson tidak ditemukan."
-                    );
+                    const group =
+                        L.featureGroup(
+                            mapFeatures
+                        );
 
-                }
-
-
-                return response.json();
-
-            }
-        )
-
-
-
-        .then(
-            data => {
-
-
-                /* =================================================
-                   CREATE GEOJSON LAYER
-                ================================================= */
-
-                const geojsonLayer =
-                    L.geoJSON(
-                        data,
-                        {
-
-
-                            /* =====================================
-                               POINT MARKER
-                            ===================================== */
-
-                            pointToLayer:
-                                function(
-                                    feature,
-                                    latlng
-                                ) {
-
-                                    return L.marker(
-                                        latlng,
-                                        {
-                                            icon:
-                                                markerIcon
-                                        }
-                                    );
-
-                                },
-
-
-
-                            /* =====================================
-                               EACH FEATURE
-                            ===================================== */
-
-                            onEachFeature:
-                                function(
-                                    feature,
-                                    layer
-                                ) {
-
-
-                                    const properties =
-                                        feature.properties ||
-                                        {};
-
-
-
-                                    /* ==========================
-                                       GET ATTRIBUTE DATA
-                                    ========================== */
-
-                                    const nama =
-                                        getField(
-                                            properties,
-                                            "nama"
-                                        ) ||
-                                        "Unknown Location";
-
-
-                                    const provinsi =
-                                        getField(
-                                            properties,
-                                            "provinsi"
-                                        ) ||
-                                        "Indonesia";
-
-
-                                    const keterangan =
-                                        getField(
-                                            properties,
-                                            "keterangan"
-                                        ) ||
-                                        "No description available.";
-
-
-                                    const kategori =
-                                        getField(
-                                            properties,
-                                            "kategori"
-                                        ) ||
-                                        "LOCATION";
-
-
-
-                                    /* ==========================
-                                       POPUP
-                                    ========================== */
-
-                                    const popupHTML = `
-
-                                        <div class="popup">
-
-                                            <div class="popup-tag">
-
-                                                ${kategori}
-
-                                            </div>
-
-
-                                            <h2>
-
-                                                ${nama}
-
-                                            </h2>
-
-
-                                            <div class="popup-location">
-
-                                                ${provinsi}
-
-                                            </div>
-
-
-                                            <div class="popup-line"></div>
-
-
-                                            <p>
-
-                                                ${keterangan}
-
-                                            </p>
-
-                                        </div>
-
-                                    `;
-
-
-                                    layer.bindPopup(
-                                        popupHTML,
-                                        {
-                                            maxWidth: 280,
-                                            className:
-                                                "custom-popup"
-                                        }
-                                    );
-
-
-
-                                    /* ==========================
-                                       CREATE SIDEBAR ITEM
-                                    ========================== */
-
-                                    const list =
-                                        document.getElementById(
-                                            "location-list"
-                                        );
-
-
-                                    const index =
-                                        list.querySelectorAll(
-                                            ".location-item"
-                                        ).length + 1;
-
-
-
-                                    const item =
-                                        document.createElement(
-                                            "button"
-                                        );
-
-
-                                    item.className =
-                                        "location-item";
-
-
-
-                                    item.innerHTML = `
-
-                                        <div class="location-left">
-
-                                            <span
-                                                class="location-index"
-                                            >
-                                                ${String(index).padStart(2, "0")}
-                                            </span>
-
-
-                                            <div class="location-text">
-
-                                                <strong>
-
-                                                    ${nama}
-
-                                                </strong>
-
-
-                                                <span>
-
-                                                    ${provinsi}
-
-                                                </span>
-
-                                            </div>
-
-                                        </div>
-
-
-                                        <span class="location-arrow">
-
-                                            ↗
-
-                                        </span>
-
-                                    `;
-
-
-
-                                    /* ==========================
-                                       SIDEBAR CLICK
-                                    ========================== */
-
-                                    item.addEventListener(
-                                        "click",
-                                        function() {
-
-
-                                            const latlng =
-                                                layer.getLatLng();
-
-
-                                            map.flyTo(
-                                                latlng,
-                                                10,
-                                                {
-                                                    duration: 1.2
-                                                }
-                                            );
-
-
-                                            setTimeout(
-                                                function() {
-
-                                                    layer.openPopup();
-
-                                                },
-                                                700
-                                            );
-
-
-                                        }
-                                    );
-
-
-                                    list.appendChild(
-                                        item
-                                    );
-
-                                }
-
-                        }
-                    )
-                    .addTo(map);
-
-
-
-                /* =================================================
-                   UPDATE LOCATION COUNT
-                ================================================= */
-
-                const total =
-                    data.features
-                        ? data.features.length
-                        : 0;
-
-
-                document.getElementById(
-                    "location-count"
-                ).textContent =
-                    total;
-
-
-
-                /* =================================================
-                   REMOVE LOADING
-                ================================================= */
-
-                const loading =
-                    document.querySelector(
-                        ".loading"
-                    );
-
-
-                if (
-                    loading
-                ) {
-
-                    loading.remove();
-
-                }
-
-
-
-                /* =================================================
-                   FIT MAP TO LOCATIONS
-                ================================================= */
-
-                if (
-                    geojsonLayer
-                        .getBounds()
-                        .isValid()
-                ) {
 
                     map.fitBounds(
-                        geojsonLayer.getBounds(),
+                        group.getBounds(),
                         {
                             padding: [
-                                100,
-                                100
+                                90,
+                                90
                             ]
                         }
                     );
 
                 }
+                else {
 
-            }
-        )
+                    showError(
+                        "Tidak ada Point Feature yang valid di lokasi.geojson."
+                    );
+
+                }
+
+            })
 
 
-
-        /* =====================================================
-           ERROR HANDLING
-        ===================================================== */
-
-        .catch(
-            error => {
+            .catch(error => {
 
                 console.error(
+                    "GeoJSON error:",
                     error
                 );
 
 
-                document.getElementById(
-                    "location-list"
-                ).innerHTML = `
+                showError(
+                    error.message
+                );
 
-                    <div class="error">
-
-                        <strong>
-                            Map data unavailable.
-                        </strong>
-
-
-                        <p>
-
-                            Make sure
-                            <b>lokasi.geojson</b>
-                            is in the same folder
-                            as this HTML file.
-
-                        </p>
-
-                    </div>
-
-                `;
-
-            }
-        );
-
+            });
 
     </script>
 
