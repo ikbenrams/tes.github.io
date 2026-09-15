@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "lokasi",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{"type":"Feature","properties":{"fid":1,"Nama":"Pandeglang","Provinsi":"Banten","Keterangan":"Geryn"},"geometry":{"type":"Point","coordinates":[106.108800282551698,-6.307722136567849]}},
+{"type":"Feature","properties":{"fid":2,"Nama":"Sabu Raijua","Provinsi":"Nusa Tenggara Timur","Keterangan":"Dika"},"geometry":{"type":"Point","coordinates":[121.870234940216889,-10.461202564940976]}},
+{"type":"Feature","properties":{"fid":3,"Nama":"Tolitoli","Provinsi":"Sulawesi Tengah","Keterangan":"Chindoliza"},"geometry":{"type":"Point","coordinates":[120.803855511692035,1.031208465708679]}}
+]
+}
