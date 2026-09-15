@@ -1,40 +1,542 @@
+/* ==========================================
+   RESET
+========================================== */
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+
+html,
 body {
-    font-family: Arial, sans-serif;
-    background: #f5f5f5;
+    width: 100%;
+    height: 100%;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background: #ffffff;
+
+    color: #111111;
 }
 
-.header {
-    height: 80px;
-    background: #1f2937;
-    color: white;
-    padding: 15px 25px;
+
+/* ==========================================
+   MAIN APP
+========================================== */
+
+.app {
+    width: 100%;
+    height: 100vh;
+
+    display: flex;
+
+    overflow: hidden;
 }
 
-.header h1 {
-    font-size: 24px;
+
+/* ==========================================
+   SIDEBAR
+========================================== */
+
+.sidebar {
+    width: 360px;
+    height: 100vh;
+
+    background: #0b0b0b;
+
+    color: #ffffff;
+
+    padding: 42px 34px 28px;
+
+    display: flex;
+    flex-direction: column;
+
+    position: relative;
+
+    z-index: 1000;
 }
 
-.header p {
-    margin-top: 5px;
-    font-size: 14px;
-    color: #d1d5db;
+
+/* ==========================================
+   BRAND
+========================================== */
+
+.brand-label {
+    font-size: 10px;
+
+    letter-spacing: 3px;
+
+    color: #777777;
+
+    margin-bottom: 18px;
 }
+
+
+.brand h1 {
+    font-size: 34px;
+
+    line-height: 1.05;
+
+    font-weight: 700;
+
+    letter-spacing: -1.5px;
+}
+
+
+.brand p {
+    margin-top: 18px;
+
+    max-width: 270px;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+
+    color: #9a9a9a;
+}
+
+
+/* ==========================================
+   DIVIDER
+========================================== */
+
+.divider {
+    width: 100%;
+
+    height: 1px;
+
+    background: #292929;
+
+    margin: 38px 0 24px;
+}
+
+
+/* ==========================================
+   LOCATION HEADER
+========================================== */
+
+.locations-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 12px;
+
+    font-size: 10px;
+
+    letter-spacing: 2px;
+
+    color: #777777;
+}
+
+
+.locations-header span:last-child {
+    color: #ffffff;
+
+    font-size: 11px;
+
+    padding: 5px 9px;
+
+    border: 1px solid #333333;
+
+    border-radius: 30px;
+}
+
+
+/* ==========================================
+   LOCATION LIST
+========================================== */
+
+.location-list {
+    display: flex;
+
+    flex-direction: column;
+}
+
+
+.location-item {
+    width: 100%;
+
+    padding: 18px 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    background: transparent;
+
+    border: none;
+
+    border-bottom: 1px solid #292929;
+
+    color: #ffffff;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        padding-left 0.25s ease,
+        background 0.25s ease;
+}
+
+
+.location-item:hover {
+    padding-left: 8px;
+}
+
+
+.location-left {
+    display: flex;
+
+    align-items: center;
+}
+
+
+.location-number {
+    width: 35px;
+
+    font-size: 11px;
+
+    color: #5d5d5d;
+}
+
+
+.location-info {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+
+.location-info strong {
+    font-size: 15px;
+
+    font-weight: 500;
+
+    color: #ffffff;
+}
+
+
+.location-info span {
+    font-size: 11px;
+
+    color: #777777;
+}
+
+
+.arrow {
+    font-size: 18px;
+
+    color: #555555;
+
+    transition:
+        transform 0.25s ease,
+        color 0.25s ease;
+}
+
+
+.location-item:hover .arrow {
+    color: #ffffff;
+
+    transform:
+        translate(3px, -3px);
+}
+
+
+/* ==========================================
+   LOADING
+========================================== */
+
+.loading {
+    padding: 15px 0;
+
+    font-size: 12px;
+
+    color: #666666;
+}
+
+
+/* ==========================================
+   SIDEBAR FOOTER
+========================================== */
+
+.sidebar-footer {
+    margin-top: auto;
+
+    padding-top: 20px;
+
+    font-size: 8px;
+
+    letter-spacing: 2px;
+
+    color: #444444;
+}
+
+
+/* ==========================================
+   MAP
+========================================== */
+
+.map-container {
+    flex: 1;
+
+    height: 100vh;
+
+    position: relative;
+}
+
 
 #map {
     width: 100%;
-    height: calc(100vh - 80px);
+
+    height: 100%;
 }
 
-.popup h3 {
-    margin-bottom: 8px;
+
+/* ==========================================
+   MAP LABEL
+========================================== */
+
+.map-label {
+    position: absolute;
+
+    top: 24px;
+
+    right: 24px;
+
+    z-index: 500;
+
+    padding: 10px 14px;
+
+    background:
+        rgba(255, 255, 255, 0.92);
+
+    border:
+        1px solid #dddddd;
+
+    font-size: 9px;
+
+    letter-spacing: 2px;
+
+    color: #222222;
 }
 
-.popup p {
+
+/* ==========================================
+   CUSTOM MARKER
+========================================== */
+
+.custom-marker {
+    background: transparent;
+
+    border: none;
+}
+
+
+.marker-dot {
+    width: 18px;
+
+    height: 18px;
+
+    background: #111111;
+
+    border-radius: 50%;
+
+    border: 4px solid #ffffff;
+
+    box-shadow:
+        0 0 0 1px #111111,
+        0 3px 12px
+        rgba(0, 0, 0, 0.25);
+
+    transition:
+        transform 0.2s ease;
+}
+
+
+.marker-dot:hover {
+    transform: scale(1.25);
+}
+
+
+/* ==========================================
+   POPUP
+========================================== */
+
+.leaflet-popup-content-wrapper {
+    border-radius: 0;
+
+    box-shadow:
+        0 12px 40px
+        rgba(0, 0, 0, 0.15);
+}
+
+
+.leaflet-popup-content {
+    width: 250px !important;
+
+    margin: 0;
+}
+
+
+.popup-card {
+    padding: 22px;
+}
+
+
+.popup-category {
+    margin-bottom: 10px;
+
+    font-size: 9px;
+
+    letter-spacing: 2px;
+
+    color: #888888;
+}
+
+
+.popup-card h2 {
     margin-bottom: 5px;
+
+    font-size: 22px;
+
+    line-height: 1.1;
+
+    color: #111111;
+}
+
+
+.popup-location {
+    margin-bottom: 17px;
+
+    font-size: 12px;
+
+    color: #666666;
+}
+
+
+.popup-card p {
+    font-size: 12px;
+
+    line-height: 1.6;
+
+    color: #555555;
+}
+
+
+/* ==========================================
+   ERROR
+========================================== */
+
+.error-message {
+    padding: 15px 0;
+
+    font-size: 12px;
+
+    line-height: 1.6;
+
+    color: #777777;
+}
+
+
+/* ==========================================
+   LEAFLET ZOOM
+========================================== */
+
+.leaflet-control-zoom {
+    border:
+        1px solid #dddddd !important;
+}
+
+
+.leaflet-control-zoom a {
+    width: 34px !important;
+
+    height: 34px !important;
+
+    line-height: 34px !important;
+
+    background: #ffffff !important;
+
+    color: #111111 !important;
+
+    border-bottom:
+        1px solid #dddddd !important;
+}
+
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 800px) {
+
+    .app {
+        flex-direction: column;
+    }
+
+
+    .sidebar {
+        width: 100%;
+
+        height: 280px;
+
+        padding: 25px;
+    }
+
+
+    .brand h1 {
+        font-size: 26px;
+    }
+
+
+    .brand p {
+        display: none;
+    }
+
+
+    .divider {
+        margin:
+            20px 0 10px;
+    }
+
+
+    .location-list {
+        flex-direction: row;
+
+        gap: 15px;
+
+        overflow-x: auto;
+    }
+
+
+    .location-item {
+        min-width: 180px;
+
+        border-bottom: none;
+    }
+
+
+    .sidebar-footer {
+        display: none;
+    }
+
+
+    .map-container {
+        height:
+            calc(100vh - 280px);
+    }
+
 }
