@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -20,19 +19,17 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
-
 </head>
 
 
 <body>
 
-
     <!-- MAP -->
     <div id="map"></div>
 
 
-    <!-- INFO PANEL -->
-    <aside class="info-panel">
+    <!-- FLOATING SIDEBAR -->
+    <aside class="sidebar">
 
         <div class="eyebrow">
             GIS PORTFOLIO
@@ -43,57 +40,50 @@
             <span>Location Explorer</span>
         </h1>
 
-        <p class="intro">
-            Interactive location mapping project
-            created with QGIS, GeoJSON and Leaflet.
+        <p class="description">
+            Interactive Web GIS project built with
+            QGIS, GeoJSON and Leaflet.
         </p>
-
 
         <div class="divider"></div>
 
-
-        <div class="section-title">
+        <div class="locations-header">
             <span>LOCATIONS</span>
             <span id="location-count">0</span>
         </div>
 
-
-        <div
-            id="location-list"
-            class="location-list"
-        >
+        <div id="location-list" class="location-list">
 
             <div class="loading">
-                Loading...
+                Loading locations...
             </div>
 
         </div>
 
-
-        <div class="footer">
-            QGIS&nbsp;&nbsp;·&nbsp;&nbsp;GeoJSON&nbsp;&nbsp;·&nbsp;&nbsp;Leaflet
+        <div class="sidebar-footer">
+            QGIS · GEOJSON · LEAFLET
         </div>
 
     </aside>
 
 
-    <!-- MAP LABEL -->
+    <!-- SMALL MAP LABEL -->
     <div class="map-label">
         INDONESIA / WEB GIS
     </div>
 
 
-    <!-- LEAFLET JS -->
+    <!-- Leaflet JS -->
     <script
-        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    ></script>
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+    </script>
 
 
     <script>
 
-        // =====================================================
-        // 1. CREATE MAP
-        // =====================================================
+        /* ==========================================
+           INITIALIZE MAP
+        ========================================== */
 
         const map = L.map("map", {
             zoomControl: false
@@ -103,15 +93,18 @@
         );
 
 
-        // Zoom control
+        /* ==========================================
+           ZOOM CONTROL
+        ========================================== */
+
         L.control.zoom({
             position: "bottomright"
         }).addTo(map);
 
 
-        // =====================================================
-        // 2. OPENSTREETMAP
-        // =====================================================
+        /* ==========================================
+           OPENSTREETMAP BASEMAP
+        ========================================== */
 
         L.tileLayer(
             "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -124,163 +117,109 @@
         ).addTo(map);
 
 
-        // =====================================================
-        // 3. FUNCTION TO READ QGIS FIELD
-        // =====================================================
+        /* ==========================================
+           READ QGIS FIELD
+        ========================================== */
 
-        function getField(properties, wantedName) {
+        function getField(properties, fieldName) {
 
             if (!properties) {
                 return "";
             }
 
-            const wanted =
-                wantedName
+            const target =
+                fieldName
                     .toLowerCase()
                     .replace(/[\s_-]/g, "");
 
 
-            for (
-                const key of Object.keys(properties)
-            ) {
+            const key =
+                Object.keys(properties).find(
+                    key => {
 
-                const normalizedKey =
-                    key
-                        .toLowerCase()
-                        .replace(/[\s_-]/g, "");
+                        const normalizedKey =
+                            key
+                                .toLowerCase()
+                                .replace(/[\s_-]/g, "");
 
-
-                if (
-                    normalizedKey === wanted
-                ) {
-
-                    return properties[key];
-
-                }
-
-            }
-
-
-            return "";
-        }
-
-
-        // =====================================================
-        // 4. SHOW ERROR
-        // =====================================================
-
-        function showError(message) {
-
-            const list =
-                document.getElementById(
-                    "location-list"
+                        return normalizedKey === target;
+                    }
                 );
 
 
-            list.innerHTML = `
-                <div class="error-box">
-                    <strong>Map data error</strong>
-                    <p>${message}</p>
-                </div>
-            `;
-
+            return key
+                ? properties[key]
+                : "";
         }
 
 
-        // =====================================================
-        // 5. LOAD GEOJSON
-        // =====================================================
+        /* ==========================================
+           LOAD GEOJSON
+        ========================================== */
 
-        fetch("./lokasi.geojson")
+        fetch("lokasi.geojson")
 
             .then(response => {
 
                 if (!response.ok) {
 
                     throw new Error(
-                        "lokasi.geojson tidak ditemukan. Pastikan file JSON berada satu folder dengan index.html."
+                        "lokasi.geojson tidak ditemukan."
                     );
 
                 }
 
                 return response.json();
-
             })
 
 
             .then(data => {
 
-                console.log(
-                    "GeoJSON loaded:",
-                    data
-                );
-
-
-                // Make sure it's a FeatureCollection
                 if (
-                    !data ||
-                    data.type !== "FeatureCollection"
+                    !data.features ||
+                    !Array.isArray(data.features)
                 ) {
 
                     throw new Error(
-                        "File lokasi.geojson bukan FeatureCollection GeoJSON yang valid."
+                        "Format GeoJSON tidak valid."
                     );
-
                 }
 
 
-                if (
-                    !Array.isArray(
-                        data.features
-                    )
-                ) {
-
-                    throw new Error(
-                        "GeoJSON tidak memiliki daftar features."
+                const locationList =
+                    document.getElementById(
+                        "location-list"
                     );
 
-                }
+
+                locationList.innerHTML = "";
 
 
-                // Update count
+                /* ==================================
+                   LOCATION COUNT
+                ================================== */
+
                 document.getElementById(
                     "location-count"
                 ).textContent =
                     data.features.length;
 
 
-                // Remove loading text
-                document.getElementById(
-                    "location-list"
-                ).innerHTML = "";
+                const markers = [];
 
 
-                // Group for map
-                const mapFeatures = [];
-
-
-                // =================================================
-                // LOOP THROUGH FEATURES
-                // =================================================
+                /* ==================================
+                   LOOP FEATURES
+                ================================== */
 
                 data.features.forEach(
                     (feature, index) => {
 
                         if (
                             !feature.geometry ||
-                            feature.geometry.type !== "Point" ||
-                            !Array.isArray(
-                                feature.geometry.coordinates
-                            )
+                            feature.geometry.type !== "Point"
                         ) {
-
-                            console.warn(
-                                "Feature dilewati karena bukan Point:",
-                                feature
-                            );
-
                             return;
-
                         }
 
 
@@ -289,37 +228,21 @@
 
 
                         const longitude =
-                            Number(
-                                coordinates[0]
-                            );
+                            Number(coordinates[0]);
 
 
                         const latitude =
-                            Number(
-                                coordinates[1]
-                            );
+                            Number(coordinates[1]);
 
 
                         if (
-                            !Number.isFinite(
-                                longitude
-                            ) ||
-                            !Number.isFinite(
-                                latitude
-                            )
+                            !Number.isFinite(latitude) ||
+                            !Number.isFinite(longitude)
                         ) {
-
-                            console.warn(
-                                "Koordinat tidak valid:",
-                                feature
-                            );
-
                             return;
-
                         }
 
 
-                        // QGIS GeoJSON = [longitude, latitude]
                         const latlng = [
                             latitude,
                             longitude
@@ -330,7 +253,10 @@
                             feature.properties || {};
 
 
-                        // Read fields
+                        /* ==========================
+                           GET DATA
+                        ========================== */
+
                         const nama =
                             getField(
                                 properties,
@@ -363,9 +289,9 @@
                             "LOCATION";
 
 
-                        // =================================================
-                        // CREATE MARKER
-                        // =================================================
+                        /* ==========================
+                           CREATE MARKER
+                        ========================== */
 
                         const marker =
                             L.circleMarker(
@@ -384,7 +310,13 @@
                             ).addTo(map);
 
 
-                        // Small white center effect
+                        markers.push(marker);
+
+
+                        /* ==========================
+                           LABEL
+                        ========================== */
+
                         marker.bindTooltip(
                             nama,
                             {
@@ -392,19 +324,19 @@
 
                                 offset: [
                                     0,
-                                    -8
+                                    -7
                                 ],
 
-                                opacity: 0.9
+                                opacity: 0.95
                             }
                         );
 
 
-                        // =================================================
-                        // POPUP
-                        // =================================================
+                        /* ==========================
+                           POPUP
+                        ========================== */
 
-                        const popupHTML = `
+                        const popup = `
 
                             <div class="popup">
 
@@ -432,22 +364,16 @@
 
 
                         marker.bindPopup(
-                            popupHTML,
+                            popup,
                             {
                                 maxWidth: 280
                             }
                         );
 
 
-                        // Save marker
-                        mapFeatures.push(
-                            marker
-                        );
-
-
-                        // =================================================
-                        // SIDEBAR ITEM
-                        // =================================================
+                        /* ==========================
+                           SIDEBAR ITEM
+                        ========================== */
 
                         const item =
                             document.createElement(
@@ -484,6 +410,10 @@
                         `;
 
 
+                        /* ==========================
+                           CLICK SIDEBAR
+                        ========================== */
+
                         item.addEventListener(
                             "click",
                             () => {
@@ -492,7 +422,7 @@
                                     latlng,
                                     10,
                                     {
-                                        duration: 1
+                                        duration: 1.2
                                     }
                                 );
 
@@ -503,36 +433,30 @@
                                         marker.openPopup();
 
                                     },
-                                    650
+                                    700
                                 );
 
                             }
                         );
 
 
-                        document
-                            .getElementById(
-                                "location-list"
-                            )
-                            .appendChild(
-                                item
-                            );
+                        locationList.appendChild(
+                            item
+                        );
 
                     }
                 );
 
 
-                // =================================================
-                // FIT MAP
-                // =================================================
+                /* ==================================
+                   FIT ALL MARKERS
+                ================================== */
 
-                if (
-                    mapFeatures.length > 0
-                ) {
+                if (markers.length > 0) {
 
                     const group =
                         L.featureGroup(
-                            mapFeatures
+                            markers
                         );
 
 
@@ -540,23 +464,19 @@
                         group.getBounds(),
                         {
                             padding: [
-                                90,
-                                90
+                                100,
+                                100
                             ]
                         }
                     );
-
-                }
-                else {
-
-                    showError(
-                        "Tidak ada Point Feature yang valid di lokasi.geojson."
-                    );
-
                 }
 
             })
 
+
+            /* ==================================
+               ERROR
+            ================================== */
 
             .catch(error => {
 
@@ -566,14 +486,24 @@
                 );
 
 
-                showError(
-                    error.message
-                );
+                document.getElementById(
+                    "location-list"
+                ).innerHTML = `
 
+                    <div class="error">
+                        <strong>
+                            Map data error
+                        </strong>
+
+                        <p>
+                            ${error.message}
+                        </p>
+                    </div>
+
+                `;
             });
 
     </script>
-
 
 </body>
 
