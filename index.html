@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Persebaran Anggota Pak Wildan</title>
+    <title>Indonesia Location Explorer</title>
 
     <!-- Leaflet CSS -->
     <link
         rel="stylesheet"
         href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    />
+    >
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
@@ -18,60 +19,442 @@
 
 <body>
 
-    <div class="header">
-        <h1>Location Explorer</h1>
-        <p>Tes</p>
+    <div class="app">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div class="brand">
+                <div class="brand-label">
+                    GIS PORTFOLIO
+                </div>
+
+                <h1>
+                    Indonesia<br>
+                    Location Explorer
+                </h1>
+
+                <p>
+                    A simple interactive Web GIS project
+                    built with QGIS, GeoJSON and Leaflet.
+                </p>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="locations-header">
+                <span>LOCATIONS</span>
+                <span id="location-count">0</span>
+            </div>
+
+            <div id="location-list" class="location-list">
+                <div class="loading">
+                    Loading locations...
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                QGIS + GEOJSON + LEAFLET
+            </div>
+
+        </aside>
+
+
+        <!-- MAP -->
+        <main class="map-container">
+
+            <div id="map"></div>
+
+            <div class="map-label">
+                INTERACTIVE MAP
+            </div>
+
+        </main>
+
     </div>
 
-    <div id="map"></div>
 
     <!-- Leaflet JS -->
     <script
         src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
     </script>
 
-    <!-- Our JavaScript -->
+
     <script>
 
-        // Membuat peta
-        const map = L.map('map').setView([-2.5, 118], 5);
+        // ==============================
+        // INITIALIZE MAP
+        // ==============================
 
-        // Basemap OpenStreetMap
+        const map = L.map("map", {
+            zoomControl: false
+        }).setView([-2.5, 118], 5);
+
+
+        L.control.zoom({
+            position: "bottomright"
+        }).addTo(map);
+
+
+        // ==============================
+        // BASEMAP
+        // ==============================
+
         L.tileLayer(
-            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
             {
-                attribution: '&copy; OpenStreetMap contributors'
+                attribution:
+                    '&copy; OpenStreetMap contributors &copy; CARTO',
+
+                maxZoom: 20
             }
         ).addTo(map);
 
-        // Membaca file GeoJSON
-        fetch('lokasi.geojson')
-            .then(response => response.json())
-            .then(data => {
 
-                L.geoJSON(data, {
+        // ==============================
+        // CUSTOM MARKER
+        // ==============================
 
-                    onEachFeature: function(feature, layer) {
+        const markerIcon = L.divIcon({
 
-                        const properties = feature.properties;
+            className: "custom-marker",
 
-                        const popup = `
-                            <div class="popup">
-                                <h3>${properties.nama}</h3>
-                                <p><strong>Provinsi:</strong> ${properties.provinsi}</p>
-                                <p>${properties.keterangan}</p>
-                                <p><strong>Kategori:</strong> ${properties.kategori}</p>
-                            </div>
-                        `;
+            html: `
+                <div class="marker-dot"></div>
+            `,
 
-                        layer.bindPopup(popup);
-                    }
+            iconSize: [24, 24],
 
-                }).addTo(map);
+            iconAnchor: [12, 12],
+
+            popupAnchor: [0, -12]
+        });
+
+
+        // ==============================
+        // READ QGIS FIELD
+        // ==============================
+
+        function getField(properties, fieldName) {
+
+            if (!properties) {
+                return "";
+            }
+
+            const target = fieldName.toLowerCase();
+
+            const key = Object.keys(properties).find(
+                key => key.toLowerCase() === target
+            );
+
+            return key ? properties[key] : "";
+        }
+
+
+        // ==============================
+        // LOAD GEOJSON
+        // ==============================
+
+        fetch("lokasi.geojson")
+
+            .then(response => {
+
+                if (!response.ok) {
+                    throw new Error(
+                        "lokasi.geojson tidak ditemukan."
+                    );
+                }
+
+                return response.json();
 
             })
+
+
+            .then(data => {
+
+                const geojsonLayer = L.geoJSON(
+                    data,
+                    {
+
+                        // ==========================
+                        // POINT MARKER
+                        // ==========================
+
+                        pointToLayer: function(
+                            feature,
+                            latlng
+                        ) {
+
+                            return L.marker(
+                                latlng,
+                                {
+                                    icon: markerIcon
+                                }
+                            );
+                        },
+
+
+                        // ==========================
+                        // EACH FEATURE
+                        // ==========================
+
+                        onEachFeature: function(
+                            feature,
+                            layer
+                        ) {
+
+                            const properties =
+                                feature.properties || {};
+
+
+                            const nama =
+                                getField(
+                                    properties,
+                                    "nama"
+                                ) || "Unknown Location";
+
+
+                            const provinsi =
+                                getField(
+                                    properties,
+                                    "provinsi"
+                                ) || "Indonesia";
+
+
+                            const keterangan =
+                                getField(
+                                    properties,
+                                    "keterangan"
+                                ) || "No description available.";
+
+
+                            const kategori =
+                                getField(
+                                    properties,
+                                    "kategori"
+                                ) || "LOCATION";
+
+
+                            // ======================
+                            // POPUP
+                            // ======================
+
+                            const popupContent = `
+
+                                <div class="popup-card">
+
+                                    <div class="popup-category">
+                                        ${kategori}
+                                    </div>
+
+                                    <h2>
+                                        ${nama}
+                                    </h2>
+
+                                    <div class="popup-location">
+                                        ${provinsi}
+                                    </div>
+
+                                    <p>
+                                        ${keterangan}
+                                    </p>
+
+                                </div>
+
+                            `;
+
+
+                            layer.bindPopup(
+                                popupContent,
+                                {
+                                    maxWidth: 280
+                                }
+                            );
+
+
+                            // ======================
+                            // SIDEBAR ITEM
+                            // ======================
+
+                            const locationList =
+                                document.getElementById(
+                                    "location-list"
+                                );
+
+
+                            const number =
+                                locationList
+                                    .querySelectorAll(
+                                        ".location-item"
+                                    )
+                                    .length + 1;
+
+
+                            const item =
+                                document.createElement(
+                                    "button"
+                                );
+
+
+                            item.className =
+                                "location-item";
+
+
+                            item.innerHTML = `
+
+                                <div class="location-left">
+
+                                    <span class="location-number">
+                                        ${String(number).padStart(2, "0")}
+                                    </span>
+
+                                    <div class="location-info">
+
+                                        <strong>
+                                            ${nama}
+                                        </strong>
+
+                                        <span>
+                                            ${provinsi}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                                <span class="arrow">
+                                    ↗
+                                </span>
+
+                            `;
+
+
+                            // ======================
+                            // SIDEBAR CLICK
+                            // ======================
+
+                            item.addEventListener(
+                                "click",
+                                function() {
+
+                                    map.flyTo(
+                                        layer.getLatLng(),
+                                        10,
+                                        {
+                                            duration: 1.2
+                                        }
+                                    );
+
+
+                                    setTimeout(
+                                        function() {
+
+                                            layer.openPopup();
+
+                                        },
+                                        700
+                                    );
+
+                                }
+                            );
+
+
+                            locationList.appendChild(
+                                item
+                            );
+
+                        }
+
+                    }
+                ).addTo(map);
+
+
+                // ==============================
+                // LOCATION COUNT
+                // ==============================
+
+                const totalLocations =
+                    data.features
+                        ? data.features.length
+                        : 0;
+
+
+                document.getElementById(
+                    "location-count"
+                ).textContent =
+                    totalLocations;
+
+
+                // ==============================
+                // REMOVE LOADING
+                // ==============================
+
+                const loading =
+                    document.querySelector(
+                        ".loading"
+                    );
+
+
+                if (loading) {
+                    loading.remove();
+                }
+
+
+                // ==============================
+                // FIT MAP TO LOCATIONS
+                // ==============================
+
+                if (
+                    geojsonLayer.getBounds().isValid()
+                ) {
+
+                    map.fitBounds(
+                        geojsonLayer.getBounds(),
+                        {
+                            padding: [80, 80]
+                        }
+                    );
+
+                }
+
+            })
+
+
+            // ==============================
+            // ERROR
+            // ==============================
+
             .catch(error => {
-                console.error('GeoJSON gagal dimuat:', error);
+
+                console.error(
+                    "Error loading GeoJSON:",
+                    error
+                );
+
+
+                document.getElementById(
+                    "location-list"
+                ).innerHTML = `
+
+                    <div class="error-message">
+
+                        <strong>
+                            Unable to load map data.
+                        </strong>
+
+                        <br><br>
+
+                        Make sure that
+                        <strong>
+                            lokasi.geojson
+                        </strong>
+                        is in the same folder
+                        as index.html.
+
+                    </div>
+
+                `;
+
             });
 
     </script>
