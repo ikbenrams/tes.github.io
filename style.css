@@ -1,6 +1,6 @@
-/* =========================================================
-   GLOBAL
-========================================================= */
+/* ==========================================
+   RESET
+========================================== */
 
 * {
     margin: 0;
@@ -30,10 +30,9 @@ body {
 }
 
 
-
-/* =========================================================
+/* ==========================================
    MAP
-========================================================= */
+========================================== */
 
 #map {
     width: 100%;
@@ -41,12 +40,11 @@ body {
 }
 
 
+/* ==========================================
+   SIDEBAR
+========================================== */
 
-/* =========================================================
-   FLOATING INFO PANEL
-========================================================= */
-
-.info-panel {
+.sidebar {
 
     position: absolute;
 
@@ -55,138 +53,124 @@ body {
 
     width: 350px;
 
-    padding: 32px 30px 25px;
+    padding: 30px;
 
-    background:
-        rgba(10, 10, 10, 0.96);
+    background: #0b0b0b;
 
     color: #ffffff;
 
     z-index: 1000;
 
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.08);
-
     box-shadow:
         0 20px 60px
-        rgba(0, 0, 0, 0.25);
+        rgba(0, 0, 0, 0.20);
 }
 
 
+/* ==========================================
+   EYEBROW
+========================================== */
 
-/* =========================================================
-   PROJECT LABEL
-========================================================= */
+.eyebrow {
 
-.project-label {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 9px;
-
-    margin-bottom: 22px;
+    margin-bottom: 20px;
 
     font-size: 9px;
 
-    font-weight: 600;
+    font-weight: 700;
 
-    letter-spacing: 2.5px;
+    letter-spacing: 3px;
 
-    color: #969696;
+    color: #777777;
 }
 
 
-.project-dot {
+.eyebrow::before {
+
+    content: "";
+
+    display: inline-block;
 
     width: 7px;
     height: 7px;
 
+    margin-right: 8px;
+
     background: #ffffff;
 
     border-radius: 50%;
-
-    display: block;
 }
 
 
+/* ==========================================
+   TITLE
+========================================== */
 
-/* =========================================================
-   MAIN TITLE
-========================================================= */
-
-.info-panel h1 {
+.sidebar h1 {
 
     font-size: 34px;
 
     line-height: 1.05;
 
-    letter-spacing: -1.8px;
+    letter-spacing: -1.5px;
 
     font-weight: 600;
-
-    color: #ffffff;
 }
 
 
-.info-panel h1 span {
+.sidebar h1 span {
 
-    color: #7d7d7d;
+    color: #777777;
 
 }
 
 
-
-/* =========================================================
+/* ==========================================
    DESCRIPTION
-========================================================= */
+========================================== */
 
 .description {
 
-    margin-top: 20px;
+    margin-top: 18px;
 
-    max-width: 285px;
+    max-width: 275px;
 
     font-size: 12px;
 
     line-height: 1.7;
 
-    color: #898989;
+    color: #888888;
 }
 
 
-
-/* =========================================================
+/* ==========================================
    DIVIDER
-========================================================= */
+========================================== */
 
-.panel-divider {
+.divider {
 
     width: 100%;
 
     height: 1px;
 
+    margin: 28px 0 20px;
+
     background:
         rgba(255, 255, 255, 0.10);
-
-    margin: 28px 0 22px;
 }
 
 
+/* ==========================================
+   LOCATIONS HEADER
+========================================== */
 
-/* =========================================================
-   LOCATION HEADING
-========================================================= */
-
-.location-heading {
+.locations-header {
 
     display: flex;
 
-    justify-content: space-between;
-
     align-items: center;
+
+    justify-content: space-between;
 
     margin-bottom: 8px;
 
@@ -194,11 +178,11 @@ body {
 
     letter-spacing: 2px;
 
-    color: #686868;
+    color: #666666;
 }
 
 
-.location-count {
+#location-count {
 
     min-width: 25px;
 
@@ -211,16 +195,13 @@ body {
     color: #ffffff;
 
     border:
-        1px solid
-        #363636;
-
+        1px solid #333333;
 }
 
 
-
-/* =========================================================
+/* ==========================================
    LOCATION LIST
-========================================================= */
+========================================== */
 
 .location-list {
 
@@ -230,10 +211,9 @@ body {
 }
 
 
-
-/* =========================================================
+/* ==========================================
    LOCATION ITEM
-========================================================= */
+========================================== */
 
 .location-item {
 
@@ -243,9 +223,11 @@ body {
 
     align-items: center;
 
-    justify-content: space-between;
+    gap: 12px;
 
     padding: 15px 0;
+
+    background: transparent;
 
     border: none;
 
@@ -253,16 +235,14 @@ body {
         1px solid
         rgba(255, 255, 255, 0.08);
 
-    background: transparent;
-
     color: #ffffff;
-
-    cursor: pointer;
 
     text-align: left;
 
+    cursor: pointer;
+
     transition:
-        padding 0.25s ease,
+        padding-left 0.25s ease,
         opacity 0.25s ease;
 }
 
@@ -272,35 +252,30 @@ body {
     padding-left: 7px;
 
     opacity: 0.75;
-
 }
 
 
+/* ==========================================
+   NUMBER
+========================================== */
 
-/* =========================================================
-   LOCATION LEFT
-========================================================= */
+.location-number {
 
-.location-left {
-
-    display: flex;
-
-    align-items: center;
-}
-
-
-.location-index {
-
-    width: 35px;
+    width: 25px;
 
     font-size: 9px;
 
     color: #555555;
-
 }
 
 
-.location-text {
+/* ==========================================
+   LOCATION TEXT
+========================================== */
+
+.location-info {
+
+    flex: 1;
 
     display: flex;
 
@@ -310,7 +285,7 @@ body {
 }
 
 
-.location-text strong {
+.location-info strong {
 
     font-size: 14px;
 
@@ -320,7 +295,7 @@ body {
 }
 
 
-.location-text span {
+.location-info small {
 
     font-size: 10px;
 
@@ -328,14 +303,13 @@ body {
 }
 
 
-
-/* =========================================================
+/* ==========================================
    ARROW
-========================================================= */
+========================================== */
 
 .location-arrow {
 
-    font-size: 18px;
+    font-size: 17px;
 
     color: #555555;
 
@@ -355,195 +329,88 @@ body {
 }
 
 
+/* ==========================================
+   FOOTER
+========================================== */
 
-/* =========================================================
-   PANEL FOOTER
-========================================================= */
+.sidebar-footer {
 
-.panel-footer {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 8px;
-
-    margin-top: 24px;
+    margin-top: 25px;
 
     font-size: 7px;
 
-    letter-spacing: 1.5px;
+    letter-spacing: 2px;
 
-    color: #484848;
+    color: #444444;
 }
 
 
+/* ==========================================
+   MAP LABEL
+========================================== */
 
-/* =========================================================
-   MAP TITLE
-========================================================= */
-
-.map-title {
+.map-label {
 
     position: absolute;
 
     top: 30px;
-
-    right: 32px;
+    right: 30px;
 
     z-index: 800;
 
-    display: flex;
+    padding: 9px 13px;
 
-    flex-direction: column;
+    background:
+        rgba(255, 255, 255, 0.90);
 
-    align-items: flex-end;
-
-    gap: 3px;
-}
-
-
-.map-title span {
+    border:
+        1px solid #dddddd;
 
     font-size: 8px;
 
-    letter-spacing: 3px;
-
-    color: #777777;
-
-}
-
-
-.map-title strong {
-
-    font-size: 12px;
-
     letter-spacing: 2px;
 
-    font-weight: 600;
-
-    color: #222222;
-
+    color: #444444;
 }
 
 
+/* ==========================================
+   POPUP
+========================================== */
 
-/* =========================================================
-   CUSTOM MARKER
-========================================================= */
-
-.custom-marker {
-
-    background:
-        transparent;
-
-    border:
-        none;
-}
-
-
-.marker-outer {
-
-    width: 30px;
-    height: 30px;
-
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
-    background:
-        rgba(255, 255, 255, 0.75);
-
-    border-radius: 50%;
-
-    box-shadow:
-        0 4px 12px
-        rgba(0, 0, 0, 0.20);
-
-}
-
-
-.marker-inner {
-
-    width: 11px;
-    height: 11px;
-
-    background: #111111;
-
-    border-radius: 50%;
-
-    border:
-        2px solid
-        #ffffff;
-
-}
-
-
-
-/* =========================================================
-   POPUP RESET
-========================================================= */
-
-.custom-popup
 .leaflet-popup-content-wrapper {
 
     border-radius: 0;
 
-    background: #111111;
-
-    color: #ffffff;
-
     box-shadow:
-        0 15px 45px
-        rgba(0, 0, 0, 0.25);
+        0 15px 40px
+        rgba(0, 0, 0, 0.20);
 }
 
 
-.custom-popup
-.leaflet-popup-tip {
+.leaflet-popup-content {
 
-    background: #111111;
+    width: 250px !important;
+
+    margin: 0 !important;
 }
 
-
-.custom-popup
-.leaflet-popup-close-button {
-
-    color: #ffffff !important;
-
-    font-size: 18px !important;
-
-    top: 8px !important;
-
-    right: 10px !important;
-
-}
-
-
-
-/* =========================================================
-   POPUP
-========================================================= */
 
 .popup {
 
-    width: 240px;
-
-    padding: 20px 21px 21px;
+    padding: 20px;
 }
 
 
-.popup-tag {
+.popup-category {
 
-    margin-bottom: 10px;
+    margin-bottom: 9px;
 
     font-size: 8px;
 
     letter-spacing: 2px;
 
-    color: #777777;
+    color: #888888;
 }
 
 
@@ -553,34 +420,31 @@ body {
 
     line-height: 1.05;
 
-    font-weight: 500;
+    font-weight: 600;
 
-    letter-spacing: -0.5px;
-
-    color: #ffffff;
+    color: #111111;
 }
 
 
-.popup-location {
+.popup-province {
 
     margin-top: 7px;
 
     font-size: 11px;
 
-    color: #858585;
+    color: #777777;
 }
 
 
-.popup-line {
+.popup-divider {
 
     width: 100%;
 
     height: 1px;
 
-    margin: 16px 0;
+    margin: 15px 0;
 
-    background:
-        #292929;
+    background: #e5e5e5;
 }
 
 
@@ -590,23 +454,42 @@ body {
 
     line-height: 1.6;
 
-    color: #9a9a9a;
+    color: #555555;
 }
 
 
+/* ==========================================
+   TOOLTIP
+========================================== */
 
-/* =========================================================
-   LEAFLET ZOOM CONTROL
-========================================================= */
+.leaflet-tooltip {
+
+    border: none !important;
+
+    border-radius: 0 !important;
+
+    padding:
+        6px 9px;
+
+    font-size: 10px;
+
+    box-shadow:
+        0 5px 15px
+        rgba(0, 0, 0, 0.15);
+}
+
+
+/* ==========================================
+   ZOOM
+========================================== */
 
 .leaflet-control-zoom {
 
     border:
-        1px solid
-        #d8d8d8 !important;
+        1px solid #dddddd !important;
 
     box-shadow:
-        0 4px 15px
+        0 5px 20px
         rgba(0, 0, 0, 0.10) !important;
 }
 
@@ -624,41 +507,37 @@ body {
     color: #111111 !important;
 
     border-bottom:
-        1px solid
-        #dddddd !important;
+        1px solid #dddddd !important;
 }
 
 
-
-/* =========================================================
+/* ==========================================
    LOADING
-========================================================= */
+========================================== */
 
 .loading {
 
-    padding:
-        15px 0;
+    padding: 15px 0;
 
     font-size: 11px;
 
-    color: #5f5f5f;
+    color: #666666;
 }
 
 
-
-/* =========================================================
+/* ==========================================
    ERROR
-========================================================= */
+========================================== */
 
 .error {
 
-    padding: 12px 0;
+    padding: 14px 0;
 
     font-size: 11px;
 
     line-height: 1.6;
 
-    color: #777777;
+    color: #888888;
 }
 
 
@@ -671,19 +550,14 @@ body {
 .error p {
 
     margin-top: 7px;
-
 }
 
 
-
-/* =========================================================
-   LEAFLET ATTRIBUTION
-========================================================= */
+/* ==========================================
+   ATTRIBUTION
+========================================== */
 
 .leaflet-control-attribution {
-
-    padding:
-        3px 7px !important;
 
     font-size: 9px !important;
 
@@ -692,101 +566,74 @@ body {
 }
 
 
-
-/* =========================================================
+/* ==========================================
    MOBILE
-========================================================= */
+========================================== */
 
-@media (
-    max-width: 800px
-) {
+@media (max-width: 800px) {
 
-
-    .info-panel {
+    .sidebar {
 
         top: 15px;
-
         left: 15px;
-
         right: 15px;
 
         width: auto;
 
-        padding:
-            22px 22px 18px;
-
+        padding: 22px;
     }
 
 
-
-    .info-panel h1 {
+    .sidebar h1 {
 
         font-size: 27px;
-
     }
-
 
 
     .description {
 
         display: none;
-
     }
 
 
-
-    .panel-divider {
+    .divider {
 
         margin:
-            20px 0 15px;
-
+            20px 0 12px;
     }
-
 
 
     .location-list {
-
-        display: flex;
 
         flex-direction: row;
 
         gap: 20px;
 
         overflow-x: auto;
-
     }
-
 
 
     .location-item {
 
-        min-width: 180px;
+        min-width: 190px;
 
         border-bottom: none;
-
-        padding:
-            10px 0;
-
     }
 
 
-
-    .panel-footer {
+    .sidebar-footer {
 
         display: none;
-
     }
 
 
-
-    .map-title {
+    .map-label {
 
         top: auto;
 
-        right: 15px;
-
         bottom: 25px;
 
+        right: 15px;
     }
 
 }
